@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 public class ClientService {
     private final ClientRepo clientRepo;
@@ -59,7 +61,7 @@ public class ClientService {
         if (user != null) {
             return new Status(1);
         } else {
-            client.setBalance(0);
+            client.setBalance(0.0);
             clientRepo.save(client);
             return new Status(0);
         }
@@ -73,7 +75,7 @@ public class ClientService {
         } else {
             user = clientRepo.findByLoginAndPassword(client.getLogin(), client.getPassword());
             if (user != null) {
-                return new Status(0, new Balance(client.getBalance()));
+                return new Status(0, new Balance(user.getBalance()));
             } else {
                 return new Status(4);
             }

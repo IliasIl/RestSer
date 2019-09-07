@@ -25,7 +25,7 @@ public class Client implements Serializable {
     @NonNull
     private String password;
 
-    private int balance;
+    private double balance;
 
     @Transient
     private String type;

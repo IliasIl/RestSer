@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 
 public class Balance {
     @JsonView(Views.Full.class)
-    private int balance;
+    private double balance;
 }
