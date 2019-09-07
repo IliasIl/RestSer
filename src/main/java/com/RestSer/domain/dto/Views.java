@@ -1,4 +1,10 @@
 package com.RestSer.domain.dto;
 
-public interface Views {
+public final class Views {
+    public interface Balance {
+    }
+
+    public interface Full extends Balance {
+    }
+
 }
