@@ -11,8 +11,6 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-
 @Service
 public class ClientService {
     private final ClientRepo clientRepo;
@@ -42,7 +40,7 @@ public class ClientService {
             }
             int a = balanceClient(client).getResult();
             Status status = balanceClient(client);
-            String resp=objectWriter.writeValueAsString(status);
+            String resp = objectWriter.writeValueAsString(status);
             if (a == 0) {
                 return objectWriter2.writeValueAsString(status);
             } else if (a == 3) {
