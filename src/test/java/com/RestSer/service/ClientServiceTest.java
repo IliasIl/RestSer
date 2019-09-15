@@ -1,6 +1,7 @@
 package com.RestSer.service;
 
 import com.RestSer.domain.Client;
+import com.RestSer.domain.dto.ClientDto;
 import com.RestSer.domain.dto.Status;
 import com.RestSer.repo.ClientRepo;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -29,7 +30,7 @@ public class ClientServiceTest {
     public void constClient() throws JsonProcessingException {
         /*Проверим, что у пустого клиента не будет осуществлен поиск в БД,
           а также добавление. Возврат будет с кодом 2.*/
-        Client client = new Client();
+        ClientDto client = new ClientDto();
         String str = clientService.constClient(client);
         Mockito.verify(clientRepo, Mockito.times(0)).findByLogin(ArgumentMatchers.anyString());
         Mockito.verify(clientRepo, Mockito.times(0)).save(ArgumentMatchers.any(Client.class));
@@ -39,7 +40,7 @@ public class ClientServiceTest {
     @Test
     public void constClient2() throws JsonProcessingException {
         /*Проверим, что в случае заполненного логина и типа будет вызван поиск в БД.*/
-        Client client = new Client();
+        ClientDto client = new ClientDto();
         client.setType("create");
         client.setLogin("Il");
         Mockito.doReturn(new Client()).when(clientRepo).findByLogin(client.getLogin());
@@ -54,7 +55,7 @@ public class ClientServiceTest {
     @Test
     public void balanceClient() {
         /*Проверим, что будет код 3 в случае если такого пользователя нет в БД.*/
-        Client client = new Client();
+        ClientDto client = new ClientDto();
         Status status = clientService.balanceClient(client);
         Mockito.verify(clientRepo, Mockito.times(1))
                 .findByLogin(null);

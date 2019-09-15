@@ -1,6 +1,7 @@
 package com.RestSer.controller;
 
 import com.RestSer.domain.Client;
+import com.RestSer.domain.dto.ClientDto;
 import com.RestSer.service.ClientService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class ClientController {
     }
 
     @PostMapping("client")
-    public String createClient(@RequestBody Client client) throws JsonProcessingException {
+    public String createClient(@RequestBody ClientDto client) throws JsonProcessingException {
         return clientService.constClient(client);
     }
 }

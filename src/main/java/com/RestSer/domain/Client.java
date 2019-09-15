@@ -27,7 +27,6 @@ public class Client implements Serializable {
 
     private double balance;
 
-    @Transient
     private String type;
 
 }

@@ -2,6 +2,7 @@ package com.RestSer.service;
 
 import com.RestSer.domain.Client;
 import com.RestSer.domain.dto.Balance;
+import com.RestSer.domain.dto.ClientDto;
 import com.RestSer.domain.dto.Status;
 import com.RestSer.domain.dto.Views;
 import com.RestSer.repo.ClientRepo;
@@ -13,6 +14,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ClientService {
+    private static final String ST1 = "create";
+    private static final String ST2 = "get-balance";
+
     private final ClientRepo clientRepo;
     private final ObjectWriter objectWriter;
     private final ObjectWriter objectWriter2;
@@ -27,45 +31,43 @@ public class ClientService {
         this.objectWriter2 = mapper.writerWithView(Views.Full.class);
     }
 
-    public String constClient(Client client) throws JsonProcessingException {
+    public String constClient(ClientDto client) throws JsonProcessingException {
         String type = client.getType();
-        if (type != null && type.equalsIgnoreCase("create")) {
+        if (type != null && type.equalsIgnoreCase(ST1)) {
             if (client.getLogin() == null) {
                 return objectWriter.writeValueAsString(new Status(2));
             }
             return objectWriter.writeValueAsString(createClient(client));
-        } else if (type != null && type.equalsIgnoreCase("get-balance")) {
+        } else if (type != null && type.equalsIgnoreCase(ST2)) {
             if (client.getLogin() == null) {
                 return objectWriter.writeValueAsString(new Status(2));
             }
-            int a = balanceClient(client).getResult();
             Status status = balanceClient(client);
-            String resp = objectWriter.writeValueAsString(status);
-            if (a == 0) {
+            if (status.getResult() == 0) {
                 return objectWriter2.writeValueAsString(status);
-            } else if (a == 3) {
-                return resp;
             } else {
-                return resp;
+                return objectWriter.writeValueAsString(status);
             }
-
         } else {
             return objectWriter.writeValueAsString(new Status(2));
         }
     }
 
-    public Status createClient(Client client) {
+    public Status createClient(ClientDto client) {
         Client user = clientRepo.findByLogin(client.getLogin());
         if (user != null) {
             return new Status(1);
         } else {
-            client.setBalance(0.0);
-            clientRepo.save(client);
+            Client client1 = new Client();
+            client1.setBalance(0.0);
+            client1.setLogin(client.getLogin());
+            client1.setPassword(client.getPassword());
+            clientRepo.save(client1);
             return new Status(0);
         }
     }
 
-    public Status balanceClient(Client client) {
+    public Status balanceClient(ClientDto client) {
         Client user = clientRepo.findByLogin(client.getLogin());
         if (user == null) {
             return new Status(3);
