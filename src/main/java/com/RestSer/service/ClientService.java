@@ -4,11 +4,7 @@ import com.RestSer.domain.Client;
 import com.RestSer.domain.dto.Balance;
 import com.RestSer.domain.dto.ClientDto;
 import com.RestSer.domain.dto.Status;
-import com.RestSer.domain.dto.Views;
 import com.RestSer.repo.ClientRepo;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,38 +14,32 @@ public class ClientService {
     private static final String ST2 = "get-balance";
 
     private final ClientRepo clientRepo;
-    private final ObjectWriter objectWriter;
-    private final ObjectWriter objectWriter2;
 
 
     @Autowired
-    public ClientService(ClientRepo clientRepo, ObjectMapper objectMapper) {
+    public ClientService(ClientRepo clientRepo) {
         this.clientRepo = clientRepo;
-        ObjectMapper mapper = objectMapper
-                .setConfig(objectMapper.getSerializationConfig());
-        this.objectWriter = mapper.writerWithView(Views.Balance.class);
-        this.objectWriter2 = mapper.writerWithView(Views.Full.class);
     }
 
-    public String constClient(ClientDto client) throws JsonProcessingException {
+    public Status constClient(ClientDto client) {
         String type = client.getType();
         if (type != null && type.equalsIgnoreCase(ST1)) {
             if (client.getLogin() == null) {
-                return objectWriter.writeValueAsString(new Status(2));
+                return new Status(2);
             }
-            return objectWriter.writeValueAsString(createClient(client));
+            return createClient(client);
         } else if (type != null && type.equalsIgnoreCase(ST2)) {
             if (client.getLogin() == null) {
-                return objectWriter.writeValueAsString(new Status(2));
+                return new Status(2);
             }
             Status status = balanceClient(client);
             if (status.getResult() == 0) {
-                return objectWriter2.writeValueAsString(status);
+                return status;
             } else {
-                return objectWriter.writeValueAsString(status);
+                return status;
             }
         } else {
-            return objectWriter.writeValueAsString(new Status(2));
+            return new Status(2);
         }
     }
 
@@ -63,7 +53,7 @@ public class ClientService {
             client1.setLogin(client.getLogin());
             client1.setPassword(client.getPassword());
             clientRepo.save(client1);
-            return new Status(0);
+            return new Status(0, new Balance(client1.getBalance()));
         }
     }
 

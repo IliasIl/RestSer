@@ -4,7 +4,6 @@ import com.RestSer.domain.Client;
 import com.RestSer.domain.dto.ClientDto;
 import com.RestSer.domain.dto.Status;
 import com.RestSer.repo.ClientRepo;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,28 +26,28 @@ public class ClientServiceTest {
     private ClientRepo clientRepo;
 
     @Test
-    public void constClient() throws JsonProcessingException {
+    public void constClient() {
         /*Проверим, что у пустого клиента не будет осуществлен поиск в БД,
           а также добавление. Возврат будет с кодом 2.*/
         ClientDto client = new ClientDto();
-        String str = clientService.constClient(client);
+        Status str = clientService.constClient(client);
         Mockito.verify(clientRepo, Mockito.times(0)).findByLogin(ArgumentMatchers.anyString());
         Mockito.verify(clientRepo, Mockito.times(0)).save(ArgumentMatchers.any(Client.class));
-        Assert.assertThat(str, Matchers.containsString("2"));
+        Assert.assertThat(str.toString(), Matchers.containsString("2"));
     }
 
     @Test
-    public void constClient2() throws JsonProcessingException {
+    public void constClient2() {
         /*Проверим, что в случае заполненного логина и типа будет вызван поиск в БД.*/
         ClientDto client = new ClientDto();
         client.setType("create");
         client.setLogin("Il");
         Mockito.doReturn(new Client()).when(clientRepo).findByLogin(client.getLogin());
-        String str = clientService.constClient(client);
+        Status str = clientService.constClient(client);
         Mockito.verify(clientRepo, Mockito.times(1)).findByLogin(ArgumentMatchers.anyString());
         /*Проверим, что в случае повторного сохранения
           клиента с одним и тем же логином не будет происходить сохраниния в БД.*/
-        Assert.assertThat(str, Matchers.containsString("1"));
+        Assert.assertThat(str.toString(), Matchers.containsString("1"));
         Mockito.verify(clientRepo, Mockito.times(0)).save(ArgumentMatchers.any(Client.class));
     }
 

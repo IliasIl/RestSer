@@ -1,9 +1,10 @@
 package com.RestSer.controller;
 
-import com.RestSer.domain.Client;
 import com.RestSer.domain.dto.ClientDto;
+import com.RestSer.domain.dto.Status;
+import com.RestSer.domain.dto.Views;
 import com.RestSer.service.ClientService;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,8 +21,9 @@ public class ClientController {
         this.clientService = clientService;
     }
 
+    @JsonView(Views.Full.class)
     @PostMapping("client")
-    public String createClient(@RequestBody ClientDto client) throws JsonProcessingException {
+    public Status createClient(@RequestBody ClientDto client) {
         return clientService.constClient(client);
     }
 }
